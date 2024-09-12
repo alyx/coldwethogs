@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -40,7 +41,11 @@ func (s *Server) String() string {
 
 func main() {
 	var activeServers []*Server
-	resp, err := http.Get("https://plas.netsplit.nl/data/api/v1/links")
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get("https://plas.netsplit.nl/data/api/v1/links")
 	if err != nil {
 		panic(err)
 	}
